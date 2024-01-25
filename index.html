@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VueJS Lesson Depot</title><!--Title of the page -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script><!--Importing Vue.js 3 -->
-    <!--
-    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+    <!-- Previous version of Vue.js
+        <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
     -->
     <script src="https://kit.fontawesome.com/50328cb347.js" crossorigin="anonymous"></script><!--Importing the font awesome icons -->
     <link rel="stylesheet" href="./style.css"><!--Importing the style sheet -->
@@ -119,6 +119,10 @@
                             <p v-else>In Stock</p><!--Display in stock if stock is greater than or equal to 3 -->
                         </div>
                     </div>
+                </div>
+                <div v-if="sortedLessons.length<1" style="left: 0; right: 0; text-align: center; margin-top: 200px;">
+                    <!--If there are no lessons to display -->
+                    <h1>No lessons to display</h1>
                 </div>
             </div>
         </div>
