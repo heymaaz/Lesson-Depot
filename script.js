@@ -1,4 +1,4 @@
-const api_url = 'http://localhost:3000/';//URL for the api
+const api_url = 'https://lessondepot-env-3.eba-uznqjf57.eu-west-2.elasticbeanstalk.com/';//'http://localhost:3000/';//URL for the api
 //Creating the vue app
 const app = Vue.createApp({
     data() {
