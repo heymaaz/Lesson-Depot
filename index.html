@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VueJS Lesson Depot</title><!--Title of the page -->
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script><!--Importing Vue.js 2-->
+    <script src="https://kit.fontawesome.com/50328cb347.js" crossorigin="anonymous"></script><!--Importing the font awesome icons -->
+    <script src="./lessons.js"></script><!--Importing the lessons data -->
+    <link rel="stylesheet" href="./style.css"><!--Importing the style sheet -->
+</head>
+<body>
+    <div id="app"><!--Creating the vue app -->
+        <header><!--Header of the page -->
+            <h1>{{sitename}}</h1><!--Title of the page -->
+        </header>
+        <!--Button for checkout -->
+        <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+        <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+        <br>
+        <div v-if="showcart">
+            <!-- if showcart is true then show the cart-->
+            <div v-if="cartCount == 0" class="cart-container"><!--If the cart is empty -->
+                <!--Image for empty cart -->
+                <img src="https://img.freepik.com/premium-vector/shopping-cart-with-cross-mark-wireless-paymant-icon-shopping-bag-failure-paymant-sign-online-shopping-vector_662353-912.jpg" alt="Cart is empty" class="cart-image">
+              </div>
+            <div v-else><!--If the cart is not empty -->
+                <div v-for="lesson in lessons">
+                    <div v-if="cart[lesson.id] > 0" style="display: flex; align-items: center; gap: 20px;"><!--For each lesson in the cart -->
+                        <div style="flex: 1; max-width: 25%;">
+                            <!--Image of the lesson -->
+                            <img :src="lesson.image" alt="Lesson Image" width="100%">
+                        </div>
+                        <div style="flex: 2;max-width: 75%;">
+                            <!--Details of the lesson -->
+                            <h2>{{lesson.title}}</h2>
+                            <h4>{{lesson.description}}</h4>
+                            <h5>{{lesson.location}}</h5>
+                            <p>Price: £{{lesson.price}}</p>
+                            Quantity:
+                            <button v-on:click="removeFromCart(lesson.id)">-</button><!--Button to remove from cart -->
+                            {{cart[lesson.id]}}
+                            <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">+</button><!--Button to add to cart if stock available-->
+                            <button disabled="disabled" v-else>+</button><!--Button to add to cart disabled as stock not available-->
+                        </div>
+                    </div>
+                </div>
+                <h3>Your total is: £{{cartTotal}}</h3><!--Total price of items in the cart -->
+                <h3>Enter your details to place your order:</h3>
+                <div class="input-container">
+                    <strong>Full Name:</strong><!--Input for full name -->
+                    <input type="text" v-model="order.full_name" placeholder="Full Name"><!--v-model binds the input to the order.full_name variable -->
+                </div>
+                <div class="input-container">
+                    <strong>Phone Number:</strong><!--Input for phone number -->
+                    <input type="text" v-model="order.phone_number" placeholder="Phone Number"><!--v-model binds the input to the order.phone_number variable -->
+                </div>
+                <br>
+                <br>
+                <div class="input-container">
+                    <strong>Full Name:</strong><!--Displaying the full name -->
+                    <strong>{{order.full_name}}</strong>
+                </div>
+                <div class="input-container">
+                    <strong>Phone Number:</strong><!--Displaying the phone number -->
+                    <strong>{{order.phone_number}}</strong>
+                </div>
+                <button v-if="placeordercheck" v-on:click="place_order()">Place order</button><!--Button to place order -->
+                <button disabled="disabled" v-else>Place order</button><!--Button to place order disabled as details not entered correctly-->
+             </div>
+        </div>
+        <div v-else>
+            <!-- if showcart is false then show the lessons-->
+            <div>
+                <!--Search bar and sort buttons -->
+                <input type="text" v-model="search_query" placeholder="search"><!--v-model binds the input to the search_query variable -->
+                <button v-on:click="search_query=''">Clear</button><!--Button to clear the search query -->
+                <br>
+                Sort by:<!--Buttons to sort the lessons -->
+                <button v-on:click="sort_by='Title'">Title</button><!--Button to sort by title -->
+                <button v-on:click="sort_by='Price'">Price</button><!--Button to sort by price -->
+                <button v-on:click="sort_by='Location'">Location</button><!--Button to sort by location -->
+                <button v-on:click="sort_by='Availability'">Availability</button><!--Button to sort by availability -->
+                <button v-on:click="sort_by=''">None</button><!--Button to clear the sort by query -->
+                <br>
+                <button v-if="sort_by!=''" v-on:click="sort_desc=false">Ascending</button><!--Button to sort in ascending order -->
+                <button v-else disabled="disabled">Ascending</button>
+                <button v-if="sort_by!=''" v-on:click="sort_desc=true">Descending</button><!--Button to sort in descending order -->
+                <button v-else disabled="disabled">Descending</button>
+
+                <div v-if="search_query != ''">
+                    <h3>Search results for "{{search_query}}":</h3><!--Display the search query -->
+                </div>
+                <div v-if="sort_by != ''">
+                    <h3>Sorted by {{sort_by}}: {{sortMethod}}</h3><!--Display the sort by query -->
+                </div>
+                <!--Display the lessons-->
+                <div v-for="lesson in sortedLessons"><!--For each lesson in sortedLessons -->
+                    <!--For each lesson in sortedLessons -->
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="flex: 1; max-width: 25%;">
+                            <!--Image of the lesson -->
+                            <img :src="lesson.image" alt="Lesson Image" width="100%">
+                        </div>
+                        <div style="flex: 2;max-width: 75%;">
+                            <!--Details of the lesson -->
+                            <h2>{{lesson.title}}</h2><!--Title of the lesson -->
+                            <h4>{{lesson.description}}</h4><!--Description of the lesson -->
+                            <h5>{{lesson.location}}</h5><!--Location of the lesson -->
+                            <p>Price: £{{lesson.price}}</p><!--Price of the lesson -->
+                            <p>Stock Remaining: {{stockLevel(lesson.id)}}</p> <!--Stock remaining of the lesson -->
+                            <button v-on:click="addToCart(lesson.id)" v-if="canAddToCart(lesson.id)">Add to cart</button><!--Button to add to cart if stock available-->
+                            <button disabled="disabled" v-else>Add to cart</button><!--Button to add to cart disabled as stock not available-->
+                            <p v-if="stockLevel(lesson.id) == 0">Out of Stock</p><!--Display out of stock if stock is 0 -->
+                            <p v-else-if="stockLevel(lesson.id) < 3" style="color: red;">Hurry! Only {{stockLevel(lesson.id)}} left in stock.</p><!--Display stock level in red if stock is less than 3 with a only left message-->
+                            <p v-else>In Stock</p><!--Display in stock if stock is greater than or equal to 3 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //Creating the vue app
+        var app = new Vue({
+            el: '#app',
+            data: {
+                lessons: lessonsData,
+                    sitename: 'VueJS Lesson Depot',
+                    cart: Array(lessonsData.length+1).fill(0),//Creating an array of size lessonsData.length+1 and filling it with 0
+                    showcart: false,//Boolean to show or hide the cart
+                    order: {
+                        full_name: '',//Initialising the full name
+                        phone_number: ''//Initialising the phone number
+                    },
+                    search_query: '',//Initialising the search query
+                    sort_by: '',//Initialising the sort_by
+                    sort_desc: false//Boolean for sort in ascending or descending order
+            },
+            methods: {
+                addToCart(id) {
+                    console.log(`Adding to cart: ID=${id}`);//Logging the id of the lesson added to cart
+                    this.$set(this.cart, id, this.cart[id] + 1);//Adding the lesson to cart
+                },
+                setSortBy(sort_by) {
+                    this.sort_by = sort_by;//Setting the sort_by
+                },
+                removeFromCart(id) {
+                    console.log(`Removing from cart: ID=${id}`);//Logging the id of the lesson removed from cart
+                    this.$set(this.cart, id, this.cart[id] - 1);//Removing the lesson from cart
+                },
+                canAddToCart(id){
+                    return this.lessons[id-1].availableInventory > this.cart[id];//Checking if the stock is available
+                },
+                stockLevel(id) {
+                    return this.lessons[id-1].availableInventory - this.cart[id];//Returning the stock level
+                },
+                clickCart() {
+                    this.showcart = !this.showcart;//Showing or hiding the cart
+                },
+                place_order() {
+                    alert("Order placed!");//Alerting the user that the order has been placed
+                    //reload the page
+                    location.reload();
+                }
+            },
+            computed: {
+                cartCount() {//Computing the cart count
+                    let sum = 0;
+                    for(let i = 0; i < this.cart.length; i++){
+                        sum += this.cart[i];
+                    }
+                    return sum||"";
+                },
+                cartTotal() {//Computing the cart total
+                    let sum = 0;
+                    for(let i = 1; i < this.cart.length; i++){
+                        sum += this.cart[i] * this.lessons[i-1].price;
+                    }
+                    return sum.toFixed(2)||"";
+                },
+                placeordercheck() {//Checking if the order can be placed
+                    if(this.order.full_name == '' || this.order.phone_number =='')
+                        return false;
+                    return RegExp(/^[a-zA-Z ]+$/).test(this.order.full_name)&&RegExp(/^[0-9]+$/).test(this.order.phone_number);
+                },
+                filteredLessons() {//Filtering the lessons
+                    return this.lessons.filter(lesson => {
+                        return lesson.title.toLowerCase().includes(this.search_query.toLowerCase())
+                        || lesson.description.toLowerCase().includes(this.search_query.toLowerCase())
+                        || lesson.location.toLowerCase().includes(this.search_query.toLowerCase())
+                    });
+                },
+                sortMethod() {
+                    if(this.sort_desc)
+                        return "Descending";
+                    return "Ascending";
+                },
+                sortedLessons() {//Sorting the lessons
+                    if(this.sort_by == 'Title')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return a.title.localeCompare(b.title);
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return a.title.localeCompare(b.title);
+                            });
+                        }
+                        
+                    else if(this.sort_by == 'Price')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return a.price - b.price;
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return a.price - b.price;
+                            });
+                        }
+                    else if(this.sort_by == 'Location')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return a.location.localeCompare(b.location);
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return a.location.localeCompare(b.location);
+                            });
+                        }
+                    else if(this.sort_by == 'Availability')
+                        if(this.sort_desc){
+                            return this.filteredLessons.sort((b, a) => {
+                                return this.stockLevel(a.id) - this.stockLevel(b.id);
+                            });
+                        }
+                        else{
+                            return this.filteredLessons.sort((a, b) => {
+                                return this.stockLevel(a.id) - this.stockLevel(b.id);
+                            });
+                        }
+                    else{
+                        return this.filteredLessons.sort((a, b) => {
+                                return a.id - b.id;
+                    });
+                    }
+                        
+                }
+            }
+        });
+    </script>
+</body>
+</html>
