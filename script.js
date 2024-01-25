@@ -28,7 +28,8 @@ const app = Vue.createApp({
             })
             .then(() => {
                 //get lessons
-                fetch(api_url + 'search/lessons/'+this.lessonsCount+'/id/asc?')//Fetching the lessons
+                fetch(api_url + 'search/lessons?')//Fetching the lessons
+                //fetch(api_url + 'search/lessons/'+this.lessonsCount+'/id/asc?')//Fetching the lessons
                     .then(response => response.json())
                     .then(data => {
                         this.lessons = data;//Setting the lessons
@@ -64,16 +65,24 @@ const app = Vue.createApp({
             */
         },
         canAddToCart(id){
-            if (!this.lessons || this.lessons.length === 0 || !this.cart || id < 1 || id > this.lessons.length) {
+            if (!this.lessons || this.lessons.length === 0 || !this.cart || id < 1) {
                 return false; // Default value for handling invalid cases
             }
-            return this.lessons[id-1].availableInventory > this.cart[id];//Checking if the stock is available
+            for(let i = 0; i < this.lessons.length; i++){
+                if(this.lessons[i].id == id){
+                    return this.lessons[i].availableInventory > this.cart[id];//Checking if the stock is available
+                }
+            }
         },
         stockLevel(id) {
-            if (!this.lessons || this.lessons.length === 0 || !this.cart || id < 1 || id > this.lessons.length) {
+            if (!this.lessons || this.lessons.length === 0 || !this.cart || id < 1) {
                 return 0; // Default value for handling invalid cases
             }
-            return this.lessons[id-1].availableInventory - this.cart[id];//Returning the stock level
+            for(let i = 0; i < this.lessons.length; i++){
+                if(this.lessons[i].id == id){
+                    return this.lessons[i].availableInventory - this.cart[id];//Returning the stock level
+                }
+            }
         },
         clickCart() {
             this.search_query = '';//Clearing the search query when the cart is clicked to show all the lessons in the cart
@@ -114,9 +123,7 @@ const app = Vue.createApp({
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                alert("Order placed!");//Alerting the user that the order has been placed
-                //reload the page
-                //location.reload();
+                
             })
             .then(() => {//update the inventory of the lessons with the new stock level
                 for(let i = 1; i < this.cart.length; i++){
@@ -127,12 +134,15 @@ const app = Vue.createApp({
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                "availableInventory": this.lessons[i-1].availableInventory - this.cart[i]
+                                "availableInventory": Math.max(this.lessons[i-1].availableInventory - this.cart[i],0)
                             })
                         })
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
+                            alert("Order placed!");//Alerting the user that the order has been placed
+                            //reload the page
+                            location.reload();
                         })
                         .catch(err => {
                             console.log(err);
@@ -190,7 +200,8 @@ const app = Vue.createApp({
             }, 300); // Adjust 300 to the desired debounce time in milliseconds
         },
         searchLessons() {
-            fetch(api_url + 'search/lessons/'+this.lessonsCount+'/id/asc?searchTerm='+this.search_query)
+            fetch(api_url + 'search/lessons?searchTerm='+this.search_query)
+            //fetch(api_url + 'search/lessons/'+this.lessonsCount+'/id/asc?searchTerm='+this.search_query)
                 .then(response => response.json())
                 .then(data => {
                     this.lessons = data;
