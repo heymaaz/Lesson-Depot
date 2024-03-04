@@ -29,7 +29,7 @@
             "type":"image/png"
         },
         {
-            "src":"images/favicon.ico",
+            "src":"favicon.ico",
             "sizes":"48x48",
             "type":"image/png"
         }
