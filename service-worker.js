@@ -1,7 +1,6 @@
 var cacheName = "store-v1";
 var cacheFiles = [
- "index.html",
-"lessons.js"
+ "index.html"
 ];
 self.addEventListener("install", function(e) {
     console.log("[Service Worker] Install");
