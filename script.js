@@ -14,7 +14,8 @@ const app = Vue.createApp({
             },
             search_query: '',//Initialising the search query
             sort_by: '',//Initialising the sort_by
-            sort_desc: false//Boolean for sort in ascending or descending order
+            sort_desc: false,//Boolean for sort in ascending or descending order
+            showTestConsole: false,
 
         };
     },
@@ -63,6 +64,17 @@ const app = Vue.createApp({
                     caches.delete(name);
                 });
             console.log("All Caches Deleted");
+        },
+        unregisterAllServiceWorkers() {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister()
+                }
+            });
+            console.log("ServiceWorkers Unregistered");
+        },
+        reloadPage() {
+            window.location.reload();
         },
         setSortBy(sort_by) {
             this.sort_by = sort_by;//Setting the sort_by

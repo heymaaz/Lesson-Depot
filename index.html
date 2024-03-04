@@ -17,14 +17,27 @@
     <div id="app"><!--Creating the vue app -->
         <header><!--Header of the page -->
             <h1>{{sitename}}</h1><!--Title of the page -->
-            <button @click="deleteAllCaches" class="test-elem">
+             <!--Button for checkout -->
+            <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+            <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
+            <button @click="showTestConsole=!showTestConsole">
+                <span class="fas fa-terminal"></span>
+                Show Test Console
+            </button>
+            <br>
+            <button v-if="showTestConsole" @click="deleteAllCaches" class="test-elem">
                 <span class="fas fa-trash"></span>
                 Delete All Caches
             </button>
+            <button v-if="showTestConsole" @click="unregisterAllServiceWorkers" class="test-elem">
+                <span class="fab fa-uniregistry"></span>
+                Unregister All ServiceWorkers
+            </button>
+            <button v-if="showTestConsole" @click="reloadPage" class="test-elem">
+                <span class="fas fa-sync"></span>
+                Reload Page
+            </button>
         </header>
-        <!--Button for checkout -->
-        <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
-        <button v-else v-on:click="clickCart()"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>
         <br>
         <div v-if="showcart">
             <!-- if showcart is true then show the cart-->
