@@ -17,6 +17,10 @@
     <div id="app"><!--Creating the vue app -->
         <header><!--Header of the page -->
             <h1>{{sitename}}</h1><!--Title of the page -->
+            <button @click="deleteAllCaches" class="test-elem">
+                <span class="fas fa-trash"></span>
+                Delete All Caches
+            </button>
         </header>
         <!--Button for checkout -->
         <button v-if="cartCount<1 && !showcart" disabled="disabled"> {{cartCount}} <i class="fa-solid fa-cart-shopping"></i>Checkout </button>

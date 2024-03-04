@@ -57,6 +57,13 @@ const app = Vue.createApp({
                 this.$set(this.cart, id, this.cart[id] + 1);//Adding the lesson to cart
             */
         },
+        deleteAllCaches() {
+            caches.keys().then(function(names) {
+                for (let name of names)
+                    caches.delete(name);
+                });
+            console.log("All Caches Deleted");
+        },
         setSortBy(sort_by) {
             this.sort_by = sort_by;//Setting the sort_by
         },
