@@ -19,6 +19,9 @@ const app = Vue.createApp({
         };
     },
     created() {
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+        }
         //get count of lessons
         fetch(api_url + 'count/lessons')//Fetching the count of lessons
             .then(response => response.json())
