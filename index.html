@@ -116,15 +116,14 @@
                     <h3>Sorted by {{sort_by}}: {{sortMethod}}</h3><!--Display the sort by query -->
                 </div>
                 <!--Display the lessons-->
-                <div v-for="lesson in sortedLessons"><!--For each lesson in sortedLessons -->
-                    <!--For each lesson in sortedLessons -->
-                    <div style="display: flex; align-items: center; gap: 20px;">
-                        <div style="flex: 1; max-width: 25%;">
-                            <!--Image of the lesson -->
-                            <img :src="getImage(lesson.image)" alt="Lesson Image" width="100%">
+                <div class="products_container">
+                    <div v-for="lesson in sortedLessons" class="product_card"><!--For each item in items-->
+                        <div>
+                            <img :src="getImage(lesson.image)" alt="Lesson Image"><!--Image of the lesson-->
                         </div>
-                        <div style="flex: 2;max-width: 75%;">
-                            <!--Details of the lesson -->
+                        <div>
+                            <!--Details of the shoe 
+                            <h3 v-text="getName(item.full_name)">{{ item.full_name }}</h3>-->
                             <h2>{{lesson.title}}</h2><!--Title of the lesson -->
                             <h4>{{lesson.description}}</h4><!--Description of the lesson -->
                             <h5>{{lesson.location}}</h5><!--Location of the lesson -->
