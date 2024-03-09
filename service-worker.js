@@ -12,8 +12,8 @@ self.addEventListener("install", function(e) {
     );
 });
 self.addEventListener("fetch", function(e) {
-    if (!e.request.url.startsWith('http')) {//this is to avoid caching non-HTTP requests like chrome-extension://
-        console.log("[Service Worker] Skip non-HTTP/HTTPS request, such as chrome-extension");
+    if (!e.request.url.startsWith('http') || e.request.method !== 'GET') {
+        console.log("[Service Worker] Skip non-HTTP/HTTPS or non-GET request, such as chrome-extension or PUT/POST requests");
         return; // Skip this fetch event
     }
 
