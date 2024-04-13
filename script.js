@@ -1,4 +1,5 @@
-const api_url = 'https://lessondepot-env-3.eba-uznqjf57.eu-west-2.elasticbeanstalk.com/';//'http://localhost:3000/';//URL for the api
+//const api_url = 'https://lessondepot-env-3.eba-uznqjf57.eu-west-2.elasticbeanstalk.com/';//'http://localhost:3000/';//URL for the api
+const api_url = 'https://bhg1727eh3.execute-api.eu-west-2.amazonaws.com/Production/';
 //Creating the vue app
 const app = Vue.createApp({
     data() {
@@ -150,7 +151,7 @@ const app = Vue.createApp({
             .then(() => {//update the inventory of the lessons with the new stock level
                 for(let i = 1; i < this.cart.length; i++){
                     if(this.cart[i] > 0){
-                        fetch(api_url + 'collections/lessons/'+this.lessons[i-1]._id, {
+                        fetch(api_url + 'collections/lessons/id/'+this.lessons[i-1]._id, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json'
